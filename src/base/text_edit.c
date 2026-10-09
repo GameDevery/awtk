@@ -499,18 +499,21 @@ static uint32_t text_edit_measure_text_on_canvas(text_edit_t* text_edit, glyphs_
     bool_t preedit = text_edit_is_preedit_char(text_edit, i);
     bool_t briefly_show = text_edit_is_briefly_show_char(text_edit, i);
     if (mask_w > 0 && (!preedit && !briefly_show) && impl->mask) {
-      chr_w = mask_w;
+      chr_w = mask_w + CHAR_SPACING;
     } else {
       const glyph_t* g = glyphs_get(glyphs, i + start);
       if (impl->single_line && g->chr == STB_TEXTEDIT_NEWLINE) {
         chr_w = 4;
       } else {
         chr_w = glyphs_measure(glyphs, i + start, 1);
+        if (g->next_glyph == NULL) {
+          chr_w += CHAR_SPACING;
+        }
       }
     }
 
     if (chr_w > 0) {
-      w += chr_w + CHAR_SPACING;
+      w += chr_w;
     }
   }
 
@@ -1611,7 +1614,7 @@ static ret_t text_edit_paint_line(text_edit_t* text_edit, canvas_t* c, line_info
         canvas_draw_text_by_glyphs(c, glyphs, iter->glyph_arr[k], 1, rx, ry);
       }
 
-      x += (char_w == 0 ? char_w : char_w + CHAR_SPACING);
+      x += (g->next_glyph != NULL ? char_w : char_w + CHAR_SPACING);
     }
   }
 
