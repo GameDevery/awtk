@@ -67,7 +67,7 @@ ret_t hb_set_glyphs_maps(glyphs_t* glyphs, hb_info_t* info, uint32_t len) {
   maps = glyphs->l2v_maps;
   maps1 = glyphs->v2l_maps;
   str_len = glyphs_get_str_length(glyphs);
-  maps_len = tk_min(len, str_len);
+  maps_len = tk_min(len, glyphs->length);
 
   for (i = 0; i < str_len; i++) {
     maps[i] = -1;
@@ -76,6 +76,7 @@ ret_t hb_set_glyphs_maps(glyphs_t* glyphs, hb_info_t* info, uint32_t len) {
   for (i = 0; i < maps_len; i++) {
     cur_cluster = info[i].cluster;
     if (cur_cluster < 0 || (uint32_t)cur_cluster >= str_len) {
+      last_cluster = -1;
       continue;
     }
     if (cur_cluster == last_cluster) {
@@ -95,7 +96,9 @@ ret_t hb_set_glyphs_maps(glyphs_t* glyphs, hb_info_t* info, uint32_t len) {
       if (i == 0) {
         j = 1;
         while (j < str_len && maps[j] < 0) ++j;
-        maps[i] = maps[j];
+        if (j < str_len) {
+          maps[i] = maps[j];
+        }
       } else {
         maps[i] = maps[i - 1];
       }
