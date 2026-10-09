@@ -314,7 +314,6 @@ static glyphs_t* text_edit_create_glyphs(text_edit_t* text_edit, const wchar_t* 
   font_t* font = NULL;
   glyphs_t* glyphs = NULL;
   font_raster_params_t params;
-  DECL_IMPL(text_edit);
   widget_t* widget = text_edit->widget;
   style_t* style = widget->astyle;
   font_manager_t* fm = widget_get_font_manager(widget);
@@ -579,7 +578,6 @@ static void text_edit_finish_line(row_info_t* row, glyphs_t* glyphs, uint32_t of
 static row_info_t* text_edit_single_line_layout_line(text_edit_t* text_edit, uint32_t row_num,
                                                      uint32_t line_index, uint32_t offset,
                                                      glyphs_t* glyphs, glyphs_t* mask_glyphs) {
-  int32_t i = 0;
   uint32_t y = 0;
   uint32_t index = 0;
   uint32_t caret_x = 0;
@@ -668,10 +666,7 @@ static row_info_t* text_edit_multi_line_layout_line(text_edit_t* text_edit, uint
   const glyph_t* last_g = NULL;
   DECL_IMPL(text_edit);
   row_info_t* row = impl->rows->row + row_num;
-  uint32_t line_height = impl->line_height;
-  uint32_t y = line_index * line_height;
   uint32_t offset0 = offset;
-  line_info_t* last_line = NULL;
   text_layout_info_t* layout_info = &(impl->layout_info);
 
   str_len = glyphs_get_str_length(glyphs);
@@ -730,7 +725,6 @@ static row_info_t* text_edit_multi_line_layout_line(text_edit_t* text_edit, uint
 
     text_edit_finish_line(row, glyphs, offset0, line_start, line_end, x, TRUE);
     x = 0;
-    y += line_height;
     line_index++;
     line_start = line_end;
     last_breakable_i = 0;
@@ -1497,8 +1491,6 @@ static ret_t text_edit_paint_tips_text(text_edit_t* text_edit, canvas_t* c) {
 static int32_t text_edit_calc_x_on_canvas(text_edit_t* text_edit, line_info_t* iter,
                                           glyphs_t* glyphs, glyphs_t* mask_glyphs, canvas_t* c) {
   DECL_IMPL(text_edit);
-  widget_t* widget = text_edit->widget;
-  wstr_t* text = &(widget->text);
   text_layout_info_t* layout_info = &(impl->layout_info);
   align_h_t align_h = widget_get_text_align_h(text_edit->widget);
 
@@ -1530,7 +1522,6 @@ static ret_t text_edit_paint_line(text_edit_t* text_edit, canvas_t* c, line_info
   bool_t is_fill_rect = FALSE;
   widget_t* widget = text_edit->widget;
   DECL_IMPL(text_edit);
-  wstr_t* text = &(widget->text);
   style_t* style = widget->astyle;
   STB_TexteditState* state = &(impl->state);
   text_layout_info_t* layout_info = &(impl->layout_info);
